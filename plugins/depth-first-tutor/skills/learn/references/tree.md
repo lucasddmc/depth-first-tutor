@@ -49,7 +49,7 @@ Each source is a full reference or link, then `·` and what it supports. A tree 
 
 One line per node:
 
-    - [STATE] (type) (mark) question → answer (date) — alias: name — depends: name, name — reason: why
+    - [STATE] (type) (mark) question → answer (date) — alias: name — depends: name, name — reason: why — stopped at: item N ("statement")
 
 - **Indentation**: 4 spaces per level, showing where the question came up.
 - **STATE**: `OPEN` (no answer yet) · `FOCUS` (being worked on now; at most one per tree) · `CLOSED`
@@ -72,13 +72,15 @@ One line per node:
   discovered; `depends:` records the real prerequisite. The graph is a DAG: never move a node to fix
   the hierarchy, add the edge instead.
 - **reason**: why a node is DEFERRED.
+- **stopped at**: the node's anchor (rule 6): the item of its explanation where the learner stopped
+  to ask, with that item's statement. Everything after it counts as unread.
 - The node is a **question**, not a topic. "tensor product" never closes; "why do 2 qubits need 4
   amplitudes, not 2?" closes when the answer exists.
 - No checkbox syntax (`- [ ]`): GitHub, Obsidian and task apps would read the nodes as to-dos.
 - Objections and debates don't go in the tree.
 - Questions, answers and reasons follow the learner's language. The grammar's keywords (the states,
-  the types, the marks, `alias`, `depends`, `reason`, `Goal`, `Sources`, `Started`, `Grammar`) stay
-  in English.
+  the types, the marks, `alias`, `depends`, `reason`, `stopped at`, `item`, `Goal`, `Sources`,
+  `Started`, `Grammar`) stay in English.
 
 ## Rules
 
@@ -91,24 +93,43 @@ One line per node:
 3. **Closing a parent.** A parent closes only when every child is CLOSED or DEFERRED.
 4. **Moving up.** When the FOCUS closes or is deferred, the focus moves to the parent (depth-first).
    When a top-level node closes, the focus moves to the next OPEN top-level node; when none is left,
-   the session ends with the Feynman (rule 9).
+   the session ends with the Feynman (rule 10).
 5. **Full parent.** When the focus moves up, present the parent again in full: its explanation and its
    pending verification question, rewritten in the current message. Never repeat only the question and
    never ask the learner to scroll back to the earlier message. They read the parent before they had
    the child's piece, so that
    reading no longer counts. If the child changed how the parent should be understood, rewrite the
-   parent with it.
-6. **Stop rule.** Every concept has prerequisites all the way down to arithmetic; without a brake,
+   parent with it. When the parent has an anchor (rule 6), recap the items before the anchor in one
+   line and rewrite the explanation in full from the anchor on.
+6. **Anchor: where the reading stopped.** When the learner asks about an item of an explanation, that
+   item is the node's anchor. Annotate the node with `— stopped at: item N ("<statement>")`; everything
+   after the anchor counts as unread. Then:
+   - The doubt becomes a child that takes the FOCUS (rule 2). While it has the focus, the message
+     carries only the FOCUS node's verification question: no pending question from an ancestor, and
+     no reminder of one.
+   - No question may depend on an item after the anchor of the FOCUS or of any of its ancestors.
+   - When the child closes, in this order: recap the child in 1–2 lines, present the parent again from
+     its anchor (rule 5), and only then ask the parent's verification question.
+   - With several levels stacked, go back up one level at a time, each from its own anchor.
+   - Once the parent has been presented again from its anchor, delete the annotation: the rest has now
+     been read. A new doubt sets a new anchor.
+
+   The learner stops reading where the doubt comes up, so a question about the rest of the block asks
+   about something they haven't read. Before sending any message, check in your own reasoning, never
+   in the reply: (1) which node has the FOCUS? (2) is every verification question in the message that
+   node's? (3) does any question use an item that comes after an anchor? If (2) or (3) fails, cut the
+   question.
+7. **Stop rule.** Every concept has prerequisites all the way down to arithmetic; without a brake,
    depth-first takes over the session. Go down while the learner can't follow. Where they can **use
    the concept without the layer below**, close it as `(black-box)` with one line saying what is
    accepted as given. A black box is a legitimate close, not a debt, and it stays in the file so it can
    be reopened if not knowing that layer starts to hurt.
-7. **You keep the file.** Update it on every state change, without asking. It is a record of the
+8. **You keep the file.** Update it on every state change, without asking. It is a record of the
    protocol, not learning content.
-8. **Resume.** When a topic is reopened, read the tree before any mapping and propose resuming from the
+9. **Resume.** When a topic is reopened, read the tree before any mapping and propose resuming from the
    FOCUS node, if there is one, then from the OPEN and DEFERRED nodes.
-9. **Root.** The root closes with the final Feynman: append ` → <the learner's explanation in one
-   line> (date)` to the `Goal:` line.
+10. **Root.** The root closes with the final Feynman: append ` → <the learner's explanation in one
+    line> (date)` to the `Goal:` line.
 
 ## Render
 
@@ -135,4 +156,5 @@ once, after the last one.
   `depends:` shows as `⇠ <alias>, <alias>`. The focus ends with `← here`.
 - A closed node whose whole subtree is closed collapses into one line: `✅ <question>  (+3 closed)`.
 - With no sources, the second line reads `Sources: ⚠️ ungrounded`.
-- When a node closes and the focus moves up, the render comes first and the full parent second.
+- When a node closes and the focus moves up, the render comes first, then the recap of the child, then
+  the parent (rules 5 and 6).

@@ -13,10 +13,11 @@ It runs as a Claude Code plugin and as a skill you can upload to claude.ai.
 2. In its first message, every session, Claude tells you: if any concept it mentions stops you, even
    a little, say so. Then it restates the goal as a question and lists the concepts it depends on,
    and you mark each one: (K) I know it, (U) I've seen it but I'm unsure, (N) it's new to me.
-3. For each concept you don't know, Claude explains it in a few lines and asks a question you can
-   only answer by applying it. A concept you flag, or a prerequisite you need first, becomes a new
-   branch, and the session goes down into it. Once it's settled, Claude brings back the explanation
-   you were reading, in full, so you read it again with the missing piece in place.
+3. For each concept you don't know, Claude explains it in up to 5 numbered items and asks a question
+   you can only answer by applying it. A concept you flag, or a prerequisite you need first, becomes a
+   new branch, and the session goes down into it. Everything after the item where you stopped counts
+   as unread, so Claude doesn't ask about it yet. Once the branch is settled, Claude brings the
+   explanation back from that item, in full, so you read the rest with the missing piece in place.
 4. Every time a node opens or closes, Claude redraws the tree:
 
    ```

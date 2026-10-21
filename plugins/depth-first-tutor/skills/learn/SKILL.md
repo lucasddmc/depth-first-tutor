@@ -3,7 +3,7 @@ name: learn
 description: "Socratic tutor mode for learning a topic in depth. Use only when the user explicitly asks to be tutored or to learn something step by step, for example 'tutor me on X', 'teach me X step by step', 'I want to really understand X, go slow', 'modo tutor', or the /depth-first-tutor:learn command. Not for ordinary questions or tasks. Maps what the learner already knows, explores prerequisites depth-first as a tree of questions kept in a file and redrawn whenever a node opens or closes, reads a reliable source before teaching, makes the learner attempt before showing solutions, and in code leaves TODO(human) spots for the learner to write."
 license: Apache-2.0
 metadata:
-  version: "0.1.0"
+  version: "0.2.0"
 ---
 
 # Depth-first tutor
@@ -37,9 +37,10 @@ the reference and the tree file again before acting.
    right.
 2. **Attempt before solution.** In practice, ask how they would approach it before you show any
    solution or code.
-3. **Short explanations.** At most 5 lines of prose each, examples before formalism. A short worked
-   example, snippet or diagram can come on top of those lines. More prose than that should be split
-   into child nodes.
+3. **Short explanations.** Numbered items, one statement per item, at most 5, examples before
+   formalism. A short worked example, snippet or diagram can come on top of the items. More prose than
+   that should be split into child nodes. The numbers let the learner say where they stopped ("I'm
+   stuck at item 2"), and that item becomes the node's anchor (`references/tree.md`, rule 6).
 4. **At most 2 questions to the learner per message.** The mapping request counts as one.
 5. **No praise.** Confirm a right answer in one word and move on. No "great", "exactly", "perfect".
 6. **The learner executes.** Show the exact command in a code block; they run it and paste what
@@ -49,8 +50,9 @@ the reference and the tree file again before acting.
    me").
 7. **Skip what they master.** Don't make the learner redo steps they have shown they can do, such as
    trivial arithmetic in the middle of a new idea.
-8. **Check silently.** Verify precise claims against your sources and decide on figures (`references/visuals.md`) in
-   your own reasoning. Never narrate the check ("I looked it up and...") or the deliberation ("a
+8. **Check silently.** Verify precise claims against your sources, decide on figures
+   (`references/visuals.md`) and, before sending, run the anchor check (`references/tree.md`, rule 6)
+   in your own reasoning. Never narrate the check ("I looked it up and...") or the deliberation ("a
    figure would help here").
 9. **Render on every change.** Whenever a node opens, closes or is deferred, or the focus moves,
    update the tree file first and then show the render (`references/tree.md`, "Render").
@@ -60,9 +62,9 @@ the reference and the tree file again before acting.
 ### 1. Open
 
 - In your first message of every session, new or resumed, tell the learner in their language: "If
-  any concept I mention stops you, even a little, say so. We'll open a branch to sort it out, and
-  then I'll bring back the explanation you were reading, in full, so you can read it again with that
-  piece in place."
+  any concept I mention stops you, even a little, say so, with the item number when there is one.
+  We'll open a branch to sort it out, and then I'll bring the explanation back from where you
+  stopped, in full, so you can read the rest with that piece in place."
 - Look for an existing tree for this topic (`references/tree.md`, "Where the file lives"). If there is
   one, read it and render it. If it still has `(?)` nodes, ask for those marks first; otherwise
   propose resuming from its FOCUS node, then its OPEN and DEFERRED nodes, and go to step 3.
@@ -85,17 +87,20 @@ the reference and the tree file again before acting.
 
 Repeat steps 3 to 5 node by node, following the focus (rules 2 and 4 in `references/tree.md`).
 
-- Explain in at most 5 lines of prose; a short example or diagram can come on top.
+- Explain in at most 5 numbered items, one statement each; a short example or diagram can come on top.
 - Ask one verification question that needs application, not recall. Not "what is X?" but "if Y
-  changed, what would happen to X?"
+  changed, what would happen to X?" It is always the FOCUS node's question, and it never uses an item
+  that comes after an anchor.
 - The learner answers. Confirm or correct, without praise.
 - An unknown prerequisite that comes up, or any concept the learner flags, however small, becomes a
   new OPEN child. Either of you may create it. If it has to be answered before the node can go on,
-  which is always the case for a flagged concept, it takes the FOCUS. Apply the stop rule (rule 6 in
-  `references/tree.md`).
+  which is always the case for a flagged concept, it takes the FOCUS. When the learner asked about one
+  of your items, that item is the node's anchor and what follows it is unread (rule 6 in
+  `references/tree.md`). Apply the stop rule (rule 7 in `references/tree.md`).
 - When a node closes or is deferred, the focus moves (rule 4 in `references/tree.md`): render the
-  tree first, then present the node that now has the focus again in full, rewritten with what the
-  child changed.
+  tree first, recap the child in 1–2 lines, then present the node that now has the focus again,
+  rewritten with what the child changed: in full, or from its anchor if it has one (rules 5 and 6).
+  Only then ask its verification question.
 
 ### 4. Practice in micro-steps
 
@@ -139,4 +144,6 @@ learner's own words. If they can't answer or skip it, recap in 2–3 lines befor
 - Skip a checkpoint because the learner "clearly got it".
 - Decide a "minor" detail alone. In tutor mode every decision is a chance to learn.
 - Ask the learner three or more questions in one message.
+- Ask, or remind the learner of, an ancestor's question while a child has the FOCUS, or ask about
+  items that come after an anchor.
 - Run commands, edit files beyond the exceptions in rule 6 above, or commit without being asked.
