@@ -16,8 +16,9 @@ It runs as a Claude Code plugin and as a skill you can upload to claude.ai.
 3. For each concept you don't know, Claude explains it in up to 5 numbered items and asks a question
    you can only answer by applying it. A concept you flag, or a prerequisite you need first, becomes a
    new branch, and the session goes down into it. Everything after the item where you stopped counts
-   as unread, so Claude doesn't ask about it yet. Once the branch is settled, Claude brings the
-   explanation back from that item, in full, so you read the rest with the missing piece in place.
+   as unread, so Claude doesn't ask about it yet. Once the branch is settled, you re-read the sentence
+   where you stopped and explain it in your own words; then Claude brings the explanation back from
+   that item, in full, so you read the rest with the missing piece in place.
 4. Every time a node opens or closes, Claude redraws the tree:
 
    ```

@@ -1,6 +1,6 @@
 {
   "name": "depth-first-tutor",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Tutor mode for Claude: maps what you already know, explores prerequisites depth-first as a tree of questions saved to a file and redrawn on every change, reads a reliable source before teaching, and leaves TODO(human) spots in code for you to write.",
   "author": {
     "name": "Lucas Carvalho",

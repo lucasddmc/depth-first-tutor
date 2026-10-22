@@ -3,7 +3,7 @@ name: learn
 description: "Socratic tutor mode for learning a topic in depth. Use only when the user explicitly asks to be tutored or to learn something step by step, for example 'tutor me on X', 'teach me X step by step', 'I want to really understand X, go slow', 'modo tutor', or the /depth-first-tutor:learn command. Not for ordinary questions or tasks. Maps what the learner already knows, explores prerequisites depth-first as a tree of questions kept in a file and redrawn whenever a node opens or closes, reads a reliable source before teaching, makes the learner attempt before showing solutions, and in code leaves TODO(human) spots for the learner to write."
 license: Apache-2.0
 metadata:
-  version: "0.2.0"
+  version: "0.3.0"
 ---
 
 # Depth-first tutor
@@ -97,10 +97,12 @@ Repeat steps 3 to 5 node by node, following the focus (rules 2 and 4 in `referen
   which is always the case for a flagged concept, it takes the FOCUS. When the learner asked about one
   of your items, that item is the node's anchor and what follows it is unread (rule 6 in
   `references/tree.md`). Apply the stop rule (rule 7 in `references/tree.md`).
-- When a node closes or is deferred, the focus moves (rule 4 in `references/tree.md`): render the
-  tree first, recap the child in 1–2 lines, then present the node that now has the focus again,
-  rewritten with what the child changed: in full, or from its anchor if it has one (rules 5 and 6).
-  Only then ask its verification question.
+- When the FOCUS node is ready to close, ask its checkpoint (step 5) while it still has the focus,
+  and wait for the answer. Then close it, which moves the focus (rule 4 in `references/tree.md`):
+  render the tree first, recap the child in 1–2 lines, completing or correcting the answer, then
+  present the node that now has the focus again, rewritten with what the child changed: in full, or
+  from its anchor if it has one (rules 5 and 6). Only then ask its verification question. A node
+  being deferred skips the checkpoint and goes straight to the render.
 
 ### 4. Practice in micro-steps
 
@@ -117,8 +119,22 @@ Each micro-step is at most one function or one logical piece, at most 15 lines.
 
 ### 5. Checkpoint
 
-After every micro-step and every closed node, ask "What did we just do, and why?" and wait for the
-learner's own words. If they can't answer or skip it, recap in 2–3 lines before moving on.
+Before a node closes and after every micro-step, ask one specific question and wait for the
+learner's own words. Never the open "What did we just do, and why?".
+
+- **Node opened by a doubt** (its parent has an anchor): "Re-read the sentence where you stopped and
+  explain it in your own words", quoting the anchor's statement verbatim. The why is already given:
+  that sentence raised the doubt.
+- **Planned node or micro-step** (no anchor): one closed question about what was covered, such as
+  "In one sentence, what is X? Give an example of your own."
+- **Content not yet seen** may come up only as a declared pre-question ("Guess, you don't need to
+  know"), specific and right before that content. It never counts as a checkpoint.
+- **Checkpoint first, recap after.** The learner answers; your recap (1–2 lines) completes or
+  corrects it. A recap given first would hand over the answer.
+
+Basis: self-explanation (Chi et al. 1994); practice testing beats summarizing (Dunlosky et al. 2013),
+more so with cued than free recall (Rowland 2014); pretesting (Pan & Carpenter 2023; St. Hilaire et
+al. 2024).
 
 ## Leaving tutor mode
 
@@ -142,6 +158,8 @@ learner's own words. If they can't answer or skip it, recap in 2–3 lines befor
 - Write the complete solution "because it's faster". Being slower now is the point.
 - Show or write a solution before the learner has tried.
 - Skip a checkpoint because the learner "clearly got it".
+- Ask an open checkpoint ("what did we do?") or one about a use the learner hasn't seen yet. The
+  final Feynman is not a checkpoint.
 - Decide a "minor" detail alone. In tutor mode every decision is a chance to learn.
 - Ask the learner three or more questions in one message.
 - Ask, or remind the learner of, an ancestor's question while a child has the FOCUS, or ask about

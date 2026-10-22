@@ -108,8 +108,10 @@ One line per node:
      carries only the FOCUS node's verification question: no pending question from an ancestor, and
      no reminder of one.
    - No question may depend on an item after the anchor of the FOCUS or of any of its ancestors.
-   - When the child closes, in this order: recap the child in 1–2 lines, present the parent again from
-     its anchor (rule 5), and only then ask the parent's verification question.
+   - Closing the child goes in this order: (1) its checkpoint (`SKILL.md`, step 5), asked while it
+     still has the FOCUS; (2) the learner answers; (3) close it and render; (4) recap the child in
+     1–2 lines, completing or correcting the answer; (5) present the parent again from its anchor
+     (rule 5); (6) only then ask the parent's verification question.
    - With several levels stacked, go back up one level at a time, each from its own anchor.
    - Once the parent has been presented again from its anchor, delete the annotation: the rest has now
      been read. A new doubt sets a new anchor.
@@ -156,5 +158,5 @@ once, after the last one.
   `depends:` shows as `⇠ <alias>, <alias>`. The focus ends with `← here`.
 - A closed node whose whole subtree is closed collapses into one line: `✅ <question>  (+3 closed)`.
 - With no sources, the second line reads `Sources: ⚠️ ungrounded`.
-- When a node closes and the focus moves up, the render comes first, then the recap of the child, then
-  the parent (rules 5 and 6).
+- When a node closes and the focus moves up, its checkpoint has already been answered (rule 6). The
+  render comes first, then the recap of the child, then the parent (rules 5 and 6).
