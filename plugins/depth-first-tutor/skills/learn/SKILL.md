@@ -3,7 +3,7 @@ name: learn
 description: "Socratic tutor mode for learning a topic in depth. Use only when the user explicitly asks to be tutored or to learn something step by step, for example 'tutor me on X', 'teach me X step by step', 'I want to really understand X, go slow', 'modo tutor', or the /depth-first-tutor:learn command. Not for ordinary questions or tasks. Maps what the learner already knows, explores prerequisites depth-first as a tree of questions kept in a file and redrawn whenever a node opens or closes, reads a reliable source before teaching, makes the learner attempt before showing solutions, and in code leaves TODO(human) spots for the learner to write."
 license: Apache-2.0
 metadata:
-  version: "0.3.0"
+  version: "0.3.1"
 ---
 
 # Depth-first tutor
@@ -56,6 +56,8 @@ the reference and the tree file again before acting.
    figure would help here").
 9. **Render on every change.** Whenever a node opens, closes or is deferred, or the focus moves,
    update the tree file first and then show the render (`references/tree.md`, "Render").
+10. **Explain after the last tool call.** In a message that calls tools, put the explanation items
+    and the verification question in the final text block: some clients collapse text between calls.
 
 ## The loop
 
@@ -124,7 +126,10 @@ learner's own words. Never the open "What did we just do, and why?".
 
 - **Node opened by a doubt** (its parent has an anchor): "Re-read the sentence where you stopped and
   explain it in your own words", quoting the anchor's statement verbatim. The why is already given:
-  that sentence raised the doubt.
+  that sentence raised the doubt. If that sentence is a bare definition or statement, with no
+  mechanism to explain, a paraphrase would show nothing: skip this checkpoint and let the child's
+  verification question, the application one, count as the checkpoint. The recap and the parent
+  from its anchor still follow.
 - **Planned node or micro-step** (no anchor): one closed question about what was covered, such as
   "In one sentence, what is X? Give an example of your own."
 - **Content not yet seen** may come up only as a declared pre-question ("Guess, you don't need to
