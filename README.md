@@ -65,17 +65,28 @@ Custom skills need a paid plan with code execution turned on.
 3. Ask "tutor me on binary search", or on any topic. At the end, download the tree file, and attach
    it next time to resume.
 
+### OpenCode
+
+Copy the skill and the command into your global config:
+
+```bash
+mkdir -p ~/.config/opencode/skills ~/.config/opencode/commands
+cp -r plugins/depth-first-tutor/skills/learn ~/.config/opencode/skills/
+cp .opencode/commands/learn.md ~/.config/opencode/commands/
+```
+
+Then run `/learn binary search` in a session, or ask "tutor me on binary search".
+
 ### Other agents
 
 `plugins/depth-first-tutor/skills/learn/` follows the
 [Agent Skills specification](https://agentskills.io/specification). It has only been tested in
-Claude Code and claude.ai.
+Claude Code, claude.ai, and OpenCode.
 
 ## Where trees are saved
 
 By default, in `learning-trees/` inside the folder you're working in. To keep them all in one place,
-add a line to `~/.claude/CLAUDE.md` or to the project's CLAUDE.md (AGENTS.md for agents that read
-that file instead):
+add a line to the project's AGENTS.md (or `~/.claude/CLAUDE.md` for Claude):
 
 ```
 depth-first-tutor trees: ~/notes/learning-trees
